@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fit und sportlich! · LearningApps · geni@l klick 10CO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Chewy&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#2f9e5b; --green-d:#1f7a43; --green-l:#e3f4e8; --yellow:#ffd23f; --yellow-l:#fff6cf;
+  --bg:#f3f8ec; --ink:#20342a; --muted:#5d7166; --red:#e25555; --red-l:#fde3e3; --card:#fff;
+  --shadow:0 6px 18px rgba(31,122,67,.12);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Nunito',system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh}
+h1,h2,h3,.chewy{font-family:'Chewy','Nunito',cursive;font-weight:400;letter-spacing:.5px}
+button{font-family:inherit;cursor:pointer}
+.wrap{max-width:1050px;margin:0 auto;padding:18px}
+header.top{background:linear-gradient(135deg,var(--green),var(--green-d));color:#fff;border-radius:0 0 28px 28px;padding:26px 18px 30px;text-align:center;box-shadow:var(--shadow)}
+header.top h1{margin:0;font-size:clamp(2rem,6vw,3.2rem)}
+header.top .sub{opacity:.95;font-weight:700}
+header.top .badge{display:inline-block;background:var(--yellow);color:var(--ink);border-radius:99px;padding:4px 14px;font-weight:800;font-size:.85rem;margin-bottom:8px}
+.progress{margin:14px auto 0;max-width:420px;background:rgba(255,255,255,.25);border-radius:99px;height:14px;overflow:hidden}
+.progress>div{height:100%;background:var(--yellow);width:0;transition:width .5s}
+.ptext{font-size:.9rem;margin-top:6px;font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-top:22px}
+.tile{background:var(--card);border-radius:22px;padding:18px;box-shadow:var(--shadow);border:3px solid transparent;text-align:left;transition:transform .15s,border-color .15s;position:relative;display:flex;flex-direction:column;gap:6px}
+.tile:hover{transform:translateY(-4px);border-color:var(--yellow)}
+.tile .ico{font-size:2.3rem;line-height:1}
+.tile .type{font-size:.72rem;font-weight:900;text-transform:uppercase;color:var(--green-d);background:var(--green-l);align-self:flex-start;padding:3px 9px;border-radius:99px;letter-spacing:.5px}
+.tile .tt{font-family:'Chewy',cursive;font-size:1.35rem}
+.tile .ds{font-size:.88rem;color:var(--muted)}
+.tile .done{position:absolute;top:12px;right:14px;font-size:1.5rem;display:none}
+.tile.ok .done{display:block}
+.tile.ok{border-color:var(--green)}
+footer{text-align:center;color:var(--muted);font-size:.85rem;padding:30px 10px}
+/* app view */
+#app{display:none}
+.appbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.btn{border:none;border-radius:14px;padding:10px 18px;font-weight:800;font-size:1rem;background:var(--green);color:#fff;box-shadow:0 3px 0 var(--green-d)}
+.btn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--green-d)}
+.btn.y{background:var(--yellow);color:var(--ink);box-shadow:0 3px 0 #d9ab12}
+.btn.w{background:#fff;color:var(--green-d);box-shadow:0 3px 0 #cfe3d6;border:2px solid var(--green-l)}
+.btn:disabled{opacity:.5;cursor:default}
+.panel{background:var(--card);border-radius:24px;padding:20px;box-shadow:var(--shadow)}
+.apptitle{margin:0;font-size:2rem;color:var(--green-d)}
+.instr{background:var(--yellow-l);border-left:6px solid var(--yellow);border-radius:12px;padding:10px 14px;margin:10px 0 16px;font-weight:600}
+.instr .fr{display:block;font-weight:400;font-style:italic;color:var(--muted);font-size:.92rem;margin-top:2px}
+.score{font-weight:900;color:var(--green-d);background:var(--green-l);padding:6px 12px;border-radius:99px;margin-left:auto}
+.shake{animation:shake .4s}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.pop{animation:pop .35s}
+@keyframes pop{50%{transform:scale(1.08)}}
+.center{text-align:center}
+.endbox{text-align:center;padding:26px 10px}
+.endbox .big{font-size:3.5rem}
+.endbox h2{font-size:2.2rem;margin:6px 0;color:var(--green-d)}
+/* matching */
+.match{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.col{display:flex;flex-direction:column;gap:10px}
+.card{background:#fff;border:3px solid var(--green-l);border-radius:16px;padding:12px 14px;font-weight:700;font-size:1.02rem;text-align:center;transition:.15s;user-select:none}
+.card:hover{border-color:var(--yellow)}
+.card.sel{border-color:var(--green);background:var(--yellow-l)}
+.card.good{background:var(--green);color:#fff;border-color:var(--green);opacity:.55;cursor:default}
+.card.bad{background:var(--red-l);border-color:var(--red)}
+/* groups */
+.pool{display:flex;flex-wrap:wrap;gap:8px;padding:12px;background:var(--bg);border-radius:16px;min-height:60px;margin-bottom:14px}
+.chip{background:#fff;border:3px solid var(--green-l);border-radius:99px;padding:8px 14px;font-weight:700;user-select:none;touch-action:manipulation}
+.chip.sel{border-color:var(--green);background:var(--yellow-l);transform:scale(1.05)}
+.chip.in{background:var(--green-l);border-color:var(--green-l);cursor:default;font-size:.9rem;padding:5px 11px}
+.groups{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.gbox{border:3px dashed var(--green);border-radius:18px;padding:10px;min-height:140px;background:#fff;transition:.15s}
+.gbox.hover{background:var(--yellow-l);border-color:var(--yellow)}
+.gbox h3{margin:0 0 8px;color:var(--green-d);font-size:1.4rem;text-align:center}
+.gbox .items{display:flex;flex-wrap:wrap;gap:6px}
+/* tables & gaps */
+table.tt{width:100%;border-collapse:separate;border-spacing:0 6px}
+table.tt th{font-family:'Chewy',cursive;font-weight:400;font-size:1.15rem;color:var(--green-d);text-align:left;padding:4px 8px}
+table.tt td{padding:6px 8px;background:var(--bg)}
+table.tt td:first-child{border-radius:12px 0 0 12px;font-weight:800}
+table.tt td:last-child{border-radius:0 12px 12px 0}
+table.tt .fr{font-weight:400;color:var(--muted);font-size:.85rem;display:block}
+input.gap{font-family:inherit;font-size:1rem;font-weight:700;border:2.5px solid #cfe3d6;border-radius:10px;padding:7px 9px;width:100%;min-width:90px;background:#fff;color:var(--ink)}
+input.gap:focus{outline:none;border-color:var(--yellow);box-shadow:0 0 0 3px var(--yellow-l)}
+input.gap.good{border-color:var(--green);background:var(--green-l)}
+input.gap.bad{border-color:var(--red);background:var(--red-l)}
+.sol{display:block;font-size:.82rem;color:var(--green-d);font-weight:800;margin-top:3px}
+.sentences{display:flex;flex-direction:column;gap:10px}
+.sent{background:var(--bg);border-radius:14px;padding:12px 14px;font-weight:600;font-size:1.05rem;line-height:2.1}
+.sent input.gap{width:170px;display:inline-block}
+.sent .hint{color:var(--muted);font-style:italic;font-weight:600}
+.keys{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.keys button{border:2px solid var(--green-l);background:#fff;border-radius:10px;padding:6px 12px;font-weight:900;font-size:1rem;color:var(--green-d)}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;align-items:center}
+.msg{font-weight:800;font-size:1.05rem}
+.msg.good{color:var(--green-d)} .msg.bad{color:var(--red)}
+/* millionaire */
+.mio{display:grid;grid-template-columns:1fr 210px;gap:16px}
+.ladder{list-style:none;margin:0;padding:10px;background:#1f3b2c;border-radius:18px;color:#cfe3d6;display:flex;flex-direction:column-reverse;gap:3px;font-weight:800;font-size:.9rem}
+.ladder li{padding:4px 10px;border-radius:8px;display:flex;justify-content:space-between}
+.ladder li.cur{background:var(--yellow);color:var(--ink)}
+.ladder li.won{color:#8fe0ab}
+.ladder li.safe{color:#fff}
+.q{background:linear-gradient(135deg,#1f3b2c,#2c5a40);color:#fff;border-radius:20px;padding:22px;font-size:1.25rem;font-weight:800;text-align:center;margin-bottom:14px}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ans{border:3px solid var(--green);background:#fff;border-radius:99px;padding:12px 16px;font-weight:800;font-size:1.02rem;text-align:left;color:var(--ink)}
+.ans b{color:var(--green-d);margin-right:6px}
+.ans:hover:not(:disabled){background:var(--yellow-l)}
+.ans.good{background:var(--green);color:#fff}
+.ans.good b{color:#fff}
+.ans.bad{background:var(--red);color:#fff;border-color:var(--red)}
+.ans.hide{visibility:hidden}
+/* true false */
+.tf{display:flex;flex-direction:column;gap:8px}
+.tfrow{display:flex;align-items:center;gap:10px;background:var(--bg);border-radius:14px;padding:10px 12px;font-weight:700}
+.tfrow span{flex:1}
+.tfrow button{border:2.5px solid var(--green);background:#fff;border-radius:12px;padding:6px 12px;font-weight:800;color:var(--green-d)}
+.tfrow.good{background:var(--green-l)}
+.tfrow.bad{background:var(--red-l)}
+.tfrow button.pick.right{background:var(--green);color:#fff}
+.tfrow button.pick.wrong{background:var(--red);border-color:var(--red);color:#fff}
+details.texts{background:var(--yellow-l);border-radius:14px;padding:10px 14px;margin-bottom:14px}
+details.texts summary{font-weight:900;cursor:pointer;color:var(--green-d)}
+details.texts p{margin:8px 0;line-height:1.5}
+/* order */
+.answerline{min-height:64px;border:3px dashed var(--green);border-radius:16px;padding:10px;display:flex;flex-wrap:wrap;gap:8px;background:#fff;margin-bottom:12px;align-items:center}
+.answerline.good{background:var(--green-l);border-style:solid}
+.answerline.bad{background:var(--red-l);border-color:var(--red)}
+/* memory */
+.mem{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:620px;margin:0 auto}
+.mcard{aspect-ratio:1/1;perspective:600px;border:none;background:none;padding:0}
+.mcard .in{position:relative;width:100%;height:100%;transition:transform .4s;transform-style:preserve-3d}
+.mcard.open .in,.mcard.found .in{transform:rotateY(180deg)}
+.mcard .f,.mcard .b{position:absolute;inset:0;border-radius:16px;display:flex;align-items:center;justify-content:center;backface-visibility:hidden;-webkit-backface-visibility:hidden;font-weight:800;padding:6px;text-align:center}
+.mcard .f{background:linear-gradient(135deg,var(--green),var(--green-d));color:var(--yellow);font-family:'Chewy',cursive;font-size:2rem}
+.mcard .b{background:#fff;border:3px solid var(--yellow);transform:rotateY(180deg);font-size:clamp(.8rem,2.4vw,1.05rem)}
+.mcard .b.emo{font-size:clamp(2rem,7vw,3rem)}
+.mcard.found .b{background:var(--green-l);border-color:var(--green)}
+/* hangman */
+.hang{display:grid;grid-template-columns:220px 1fr;gap:18px;align-items:start}
+.word{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:12px 0}
+.word span{width:36px;height:46px;border-bottom:4px solid var(--green);display:flex;align-items:flex-end;justify-content:center;font-family:'Chewy',cursive;font-size:2rem;color:var(--green-d)}
+.letters{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.letters button{width:40px;height:42px;border-radius:10px;border:2px solid var(--green-l);background:#fff;font-weight:900;font-size:1.05rem;color:var(--ink)}
+.letters button.hit{background:var(--green);color:#fff;border-color:var(--green)}
+.letters button.miss{background:var(--red-l);color:#b33;border-color:var(--red-l)}
+.clue{background:var(--yellow-l);border-radius:14px;padding:10px 14px;font-weight:700;text-align:center}
+.clue .fr{display:block;color:var(--muted);font-weight:600;font-style:italic;font-size:.9rem}
+/* test */
+.qtest{background:var(--bg);border-radius:16px;padding:12px 16px;margin-bottom:10px}
+.qtest h4{margin:0 0 8px;font-size:1.05rem}
+.qtest label{display:flex;gap:8px;align-items:flex-start;padding:5px 6px;border-radius:10px;cursor:pointer;font-weight:600}
+.qtest label:hover{background:var(--yellow-l)}
+.result{background:linear-gradient(135deg,var(--yellow),#ffe680);border-radius:20px;padding:20px;text-align:center;font-weight:700;margin-top:14px}
+.result .pts{font-family:'Chewy',cursive;font-size:2.4rem;color:var(--green-d)}
+/* rallye */
+.rally{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.post{background:var(--bg);border-radius:16px;padding:12px 14px;border:3px solid transparent}
+.post.good{border-color:var(--green);background:var(--green-l)}
+.post .n{display:inline-block;background:var(--green);color:#fff;border-radius:50%;width:30px;height:30px;text-align:center;line-height:30px;font-weight:900;margin-right:6px}
+.post p{margin:6px 0;font-weight:700}
+.post small{color:var(--muted);font-weight:700}
+.lw{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:16px 0}
+.lw span{width:46px;height:54px;border-radius:12px;background:#fff;border:3px solid var(--yellow);display:flex;align-items:center;justify-content:center;font-family:'Chewy',cursive;font-size:2rem;color:var(--green-d)}
+.lw span.on{background:var(--yellow);animation:pop .4s}
+.confetti{position:fixed;top:-20px;font-size:1.6rem;pointer-events:none;animation:fall linear forwards;z-index:99}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
+@media (max-width:700px){
+  .mio,.hang{grid-template-columns:1fr}
+  .ladder{flex-direction:row-reverse;flex-wrap:wrap;font-size:.75rem}
+  .answers{grid-template-columns:1fr}
+  .match{gap:8px}.card{padding:10px 8px;font-size:.92rem}
+  table.tt td{padding:5px}
+  .mem{grid-template-columns:repeat(4,1fr);gap:6px}
+}
+</style>
+</head>
+<body>
+
+<div id="home">
+  <header class="top">
+    <div class="badge">geni@l klick · 10CO · Einheit 2</div>
+    <h1>Fit und sportlich!</h1>
+    <div class="sub">LearningApps – Übe, spiele und teste dich!</div>
+    <div class="progress"><div id="pbar"></div></div>
+    <div class="ptext" id="ptext">0 / 0 Apps geschafft</div>
+  </header>
+  <div class="wrap">
+    <div class="grid" id="grid"></div>
+  </div>
+  <footer>geni@l klick 10CO · Einheit 2 · Fit und sportlich! · V. Kalinijabo</footer>
+</div>
+
+<div id="app" class="wrap">
+  <div class="appbar">
+    <button class="btn w" onclick="goHome()">← Übersicht</button>
+    <span class="score" id="score"></span>
+  </div>
+  <div class="panel">
+    <h2 class="apptitle" id="atitle"></h2>
+    <div class="instr" id="ainstr"></div>
+    <div id="stage"></div>
+  </div>
+</div>
+
+<script>
+/* ============ UTILITIES ============ */
+const $ = s => document.querySelector(s);
+const el = (tag, attrs = {}, html) => { const e = document.createElement(tag); for (const k in attrs) { if (k === 'class') e.className = attrs[k]; else if (k.startsWith('on')) e[k] = attrs[k]; else e.setAttribute(k, attrs[k]); } if (html !== undefined) e.innerHTML = html; return e; };
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const norm = s => (s || '').toLowerCase().replace(/ß/g, 'ss').replace(/[’'`´]/g, "'").replace(/[.!?]+$/,'').replace(/\s+/g, ' ').trim();
+const same = (input, answers) => [].concat(answers).some(a => norm(a) === norm(input));
+function flash(node, cls) { node.classList.remove(cls); void node.offsetWidth; node.classList.add(cls); }
+function confetti() { const e = ['⚽','🏀','🎾','🏆','⭐','🥇','🏐','🏸']; for (let i = 0; i < 28; i++) { const c = el('div', { class: 'confetti' }, e[i % e.length]); c.style.left = Math.random() * 100 + 'vw'; c.style.animationDuration = (1.8 + Math.random() * 1.8) + 's'; c.style.animationDelay = Math.random() * .6 + 's'; document.body.appendChild(c); setTimeout(() => c.remove(), 4500); } }
+function setScore(t) { $('#score').textContent = t; $('#score').style.display = t ? '' : 'none'; }
+
+let done = {};
+try { done = JSON.parse(localStorage.getItem('fitsport10co') || '{}'); } catch (e) { done = {}; }
+function markDone(id) { done[id] = true; try { localStorage.setItem('fitsport10co', JSON.stringify(done)); } catch (e) {} confetti(); }
+function endScreen(stage, emoji, title, text, restart) {
+  stage.innerHTML = '';
+  const b = el('div', { class: 'endbox' }, `<div class="big">${emoji}</div><h2>${title}</h2><p>${text}</p>`);
+  const a = el('div', { class: 'actions', style: 'justify-content:center' });
+  a.append(el('button', { class: 'btn y', onclick: restart }, '↻ Nochmal'), el('button', { class: 'btn', onclick: goHome }, 'Zur Übersicht'));
+  b.append(a); stage.append(b);
+}
+function umlautKeys(container) {
+  let last = null;
+  container.addEventListener('focusin', e => { if (e.target.tagName === 'INPUT') last = e.target; });
+  const k = el('div', { class: 'keys' });
+  ['ä', 'ö', 'ü', 'Ä', 'Ö', 'Ü'].forEach(ch => k.append(el('button', { type: 'button', onmousedown: e => e.preventDefault(), onclick: () => { if (!last) return; const p = last.selectionStart ?? last.value.length; last.value = last.value.slice(0, p) + ch + last.value.slice(last.selectionEnd ?? p); last.focus(); last.setSelectionRange(p + 1, p + 1); } }, ch)));
+  return k;
+}
+
+/* ============ DATA ============ */
+const APPS = [
+{ id:'vokab', ico:'🔗', type:'Paare zuordnen', title:'Wortschatz Sport', desc:'Deutsch ↔ Französisch: Mindmap «Sport treiben»', engine:'match',
+  instr:'Klick ein deutsches Wort, dann die französische Übersetzung.<span class="fr">Clique sur un mot allemand, puis sur sa traduction.</span>', batch:6,
+  pairs:[['der Teamsport','le sport d’équipe'],['der Wintersport','le sport d’hiver'],['der Individualsport','le sport individuel'],['der Wassersport','le sport aquatique'],['der Kampfsport','le sport de combat'],['im Fitnessstudio','au fitness'],['in den Bergen','à la montagne'],['im Stadion','au stade'],['im Schwimmbad','à la piscine'],['auf dem Tennisplatz','sur le court de tennis'],['in der Natur','dans la nature'],['in der Sporthalle','à la salle de sport'],['nach der Schule','après l’école'],['in den Ferien','pendant les vacances'],['in der Freizeit','pendant le temps libre'],['am Wochenende','le week-end'],['mittwochs','tous les mercredis'],['abends','tous les soirs'],['jeden Tag','tous les jours'],['oft','souvent'],['manchmal','parfois'],['nie','jamais'],['zweimal pro Woche','deux fois par semaine'],['eine Stunde','une heure'],['langweilig','ennuyeux'],['gefährlich','dangereux'],['gesund','sain (santé)'],['wichtig','important'],['Medaillen gewinnen','gagner des médailles'],['Sport treiben','faire du sport']] },
+
+{ id:'gruppen', ico:'🗂️', type:'Gruppenzuordnung', title:'Wo? Wann? Wie oft? Warum?', desc:'Sortiere die Ausdrücke in die richtige Gruppe', engine:'group',
+  instr:'Klick einen Ausdruck und dann die passende Gruppe (oder zieh ihn hinein).<span class="fr">Clique sur une expression, puis sur le bon groupe (ou glisse-la).</span>',
+  groups:{ 'Wo?':['im Fitnessstudio','in den Bergen','im Stadion','im Schwimmbad','auf dem Sportplatz','in der Sporthalle','in der Natur'],
+           'Wann?':['nach der Schule','in den Ferien','am Wochenende','abends','um 4 Uhr','in der Freizeit'],
+           'Wie oft?':['jeden Tag','oft','manchmal','nie','zweimal pro Woche','einmal pro Woche'],
+           'Warum?':['weil es gesund ist','weil es Spass macht','Medaillen gewinnen','mit Freunden zusammen sein','gut für die Figur','weil es fit macht'] } },
+
+{ id:'memory', ico:'🃏', type:'Memory', title:'Sport-Memory', desc:'Finde das Bild und die passende Sportart', engine:'memory',
+  instr:'Dreh zwei Karten um. Finde immer Bild + Sportart!<span class="fr">Retourne deux cartes : trouve l’image et le nom du sport qui vont ensemble.</span>',
+  pairs:[['⚽','Fussball'],['🏀','Basketball'],['🎾','Tennis'],['🏊','Schwimmen'],['🚴','Rad fahren'],['🏇','Reiten'],['🧗','Klettern'],['🥊','Boxen'],['🏒','Eishockey'],['⛷️','Ski fahren'],['🏂','Snowboard fahren'],['🏓','Tischtennis'],['🏸','Federball'],['🏉','Rugby'],['🤿','Tauchen'],['⛸️','Eislaufen'],['🏐','Volleyball'],['🥋','Judo']] },
+
+{ id:'galgen', ico:'🪢', type:'Galgenmännchen', title:'Welche Sportart ist das?', desc:'Lies die Erklärung und rate das Wort', engine:'hangman',
+  instr:'Lies die Erklärung und finde die Sportart. Du hast 7 Fehlversuche.<span class="fr">Lis la définition et trouve le sport. Tu as droit à 7 erreurs.</span>',
+  words:[['REITEN','Man sitzt auf einem Pferd.','l’équitation'],['SCHWIMMEN','Das macht man im Schwimmbad.','la natation'],['KLETTERN','Man geht an einer Wand oder an einem Berg nach oben.','l’escalade'],['TAUCHEN','Du schwimmst unter Wasser.','la plongée'],['BOXEN','Zwei Personen kämpfen mit Handschuhen.','la boxe'],['FEDERBALL','Man spielt mit einem Schläger und einem leichten Ball mit Federn.','le badminton'],['EISHOCKEY','Ein Teamsport auf dem Eis mit Schläger und Puck.','le hockey sur glace'],['TISCHTENNIS','Man spielt mit kleinen Schlägern auf einem Tisch.','le ping-pong'],['SEGELN','Man fährt mit einem Boot, und der Wind hilft.','la voile'],['FUSSBALL','Elf Spieler, ein Ball – man spielt mit dem Fuss.','le football'],['RUGBY','Man hat den Ball in der Hand und läuft. 15 Personen pro Team.','le rugby'],['JUDO','Ein Kampfsport aus Japan.','le judo'],['RAFTING','Mit einem Schlauchboot auf einem wilden Fluss fahren.','le rafting']] },
+
+{ id:'formen', ico:'📈', type:'Tabelle ausfüllen', title:'Komparativ & Superlativ', desc:'Bilde die Formen: klein – kleiner – am kleinsten', engine:'table',
+  instr:'Schreib den Komparativ und den Superlativ. Achtung: ¨ und Ausnahmen!<span class="fr">Écris le comparatif et le superlatif. Attention aux Umlaut et aux exceptions !</span>',
+  cols:['Grundform','Komparativ','Superlativ'],
+  rows:[['alt','älter','am ältesten'],['billig','billiger','am billigsten'],['gross','grösser','am grössten'],['gut','besser','am besten'],['interessant','interessanter','am interessantesten'],['jung','jünger','am jüngsten'],['klein','kleiner','am kleinsten'],['kurz','kürzer','am kürzesten'],['lang','länger','am längsten'],['langsam','langsamer','am langsamsten'],['laut','lauter','am lautesten'],['leicht','leichter','am leichtesten'],['leise','leiser','am leisesten'],['schlecht','schlechter','am schlechtesten'],['schnell','schneller','am schnellsten'],['schwer','schwerer','am schwersten'],['hoch','höher','am höchsten'],['gern','lieber','am liebsten'],['viel','mehr','am meisten']] },
+
+{ id:'luecken', ico:'✏️', type:'Lückentext', title:'Grösser – schneller – besser', desc:'Rekorde und Vergleiche: Ergänze die Sätze', engine:'gaps',
+  instr:'Ergänze mit dem Komparativ oder dem Superlativ. Das Adjektiv steht in Klammern.<span class="fr">Complète avec le comparatif ou le superlatif de l’adjectif entre parenthèses.</span>',
+  items:[['Ein Tennisball ist ','kleiner',' als ein Fussball.','klein'],['Das Camp Nou in Barcelona ist am ','grössten','.','gross'],['Der Federball fliegt am ','schnellsten',' – 493 km/h!','schnell'],['Der Unspunnenstein ist am ','schwersten',': 83,5 kg.','schwer'],['Der Curlingstein ist am ','leichtesten','.','leicht'],['Lena läuft ','schneller',' als Tim.','schnell'],['Ich spiele ','lieber',' Volleyball als Basketball.','gern'],['Tischtennis spiele ich am ','liebsten','.','gern'],['Cora spielt ','besser',' Fussball als ich.','gut'],['Kevin ist ','grösser',' als Julia.','gross'],['Mein Opa ist ','älter',' als mein Vater.','alt'],['Das Matterhorn ist ','höher',' als der Säntis.','hoch'],['Ein Tennisball fliegt ','schneller',' als ein Tischtennisball.','schnell'],['Rugby ist ','gefährlicher',' als Golf.','gefährlich']] },
+
+{ id:'mio', ico:'💰', type:'Millionenspiel', title:'Wer wird Sport-Millionär?', desc:'12 Fragen – vom Wortschatz bis zu den Rekorden', engine:'mio',
+  instr:'Beantworte die Fragen. Ein Fehler – und das Spiel ist vorbei! Du hast einen 50:50-Joker.<span class="fr">Une erreur et la partie est finie ! Tu as un joker 50:50.</span>',
+  qs:[['Welche Sportart macht man im Wasser?',['Schwimmen','Klettern','Reiten','Boxen']],
+      ['Was heisst «souvent» auf Deutsch?',['oft','nie','manchmal','abends']],
+      ['Der Komparativ von «schnell» ist …',['schneller','schnellste','am schnell','mehr schnell']],
+      ['Wo spielt man Tennis?',['auf dem Tennisplatz','im Schwimmbad','in den Bergen','im Fitnessstudio']],
+      ['Welches Stadion ist am grössten?',['das Camp Nou','die Allianz Arena','das Wembley-Stadion','das Letzigrund']],
+      ['Der Komparativ von «gut» ist …',['besser','guter','güter','mehr gut']],
+      ['Welcher Ball fliegt am schnellsten?',['der Federball','der Tennisball','der Tischtennisball','der Fussball']],
+      ['Der Superlativ von «gern» ist …',['am liebsten','am gernsten','am gernesten','am meisten']],
+      ['Was wiegt 83,5 kg?',['der Unspunnenstein','der Curlingstein','der Federball','der Baumstamm']],
+      ['Welcher Satz ist richtig?',['Ich treibe Sport, weil es Spass macht.','Ich treibe Sport, weil es macht Spass.','Ich treibe Sport, weil macht es Spass.','Ich treibe Sport, es weil Spass macht.']],
+      ['Das Präteritum von «laufen» ist: er …',['lief','laufte','liefte','gelauft']],
+      ['Perfekt: Gestern … er Snowboard gefahren.',['ist','hat','war','wird']]],
+  ladder:['50','100','200','500','1 000','2 000','5 000','10 000','50 000','100 000','500 000','1 Million'] },
+
+{ id:'weil', ico:'🧩', type:'Satzpuzzle', title:'Sätze mit «weil»', desc:'Bring die Wörter in die richtige Reihenfolge', engine:'order',
+  instr:'Klick die Wörter in der richtigen Reihenfolge. Achtung: Nach «weil» steht das Verb am Ende!<span class="fr">Clique sur les mots dans le bon ordre. Après « weil », le verbe va à la fin !</span>',
+  sents:['Ich treibe Sport, weil es Spass macht.','Ich spiele Fussball, weil ich dabei Freunde treffe.','Ich treibe keinen Sport, weil ich keine Zeit habe.','Ich schwimme gern, weil Schwimmen gesund ist.','Ich treibe Sport, weil ich gerne gewinne.','Ich treibe Sport, weil ich fit sein will.','Ich treibe wenig Sport, weil ich lieber ein gutes Buch lese.','Ich treibe Sport, weil ich mich danach besser fühle.','Ich treibe keinen Sport, weil ich danach immer kaputt bin.'] },
+
+{ id:'hs', ico:'⚖️', type:'Gruppenzuordnung', title:'Perfekt: haben oder sein?', desc:'Die Verben der Einheit 2 sortieren', engine:'group',
+  instr:'Bildet man das Perfekt mit «haben» oder mit «sein»?<span class="fr">Le Perfekt de ces verbes se forme-t-il avec « haben » ou avec « sein » ?</span>',
+  groups:{ 'hat …':['trainieren','boxen','spielen','machen','ausprobieren','mitspielen','gewinnen','verlieren'], 'ist …':['fahren','joggen','laufen','klettern','segeln','fit sein'] } },
+
+{ id:'verben', ico:'🏋️', type:'Tabelle ausfüllen', title:'Verben der Einheit 2', desc:'Präteritum und Perfekt (er/sie/es)', engine:'table',
+  instr:'Schreib die Formen für «er». Beim Perfekt: «hat» oder «ist» + Partizip!<span class="fr">Écris les formes à la 3e personne (er). Au Perfekt : « hat » ou « ist » + participe.</span>',
+  cols:['Infinitiv','Präteritum (er)','Perfekt (er)'],
+  rows:[['fahren|aller (véhicule)','fuhr','ist gefahren'],['joggen|faire du jogging','joggte','ist gejoggt'],['laufen|courir','lief','ist gelaufen'],['klettern|grimper','kletterte','ist geklettert'],['segeln|faire de la voile','segelte','ist gesegelt'],['trainieren|s’entraîner','trainierte','hat trainiert'],['boxen|faire de la boxe','boxte','hat geboxt'],['spielen|jouer','spielte','hat gespielt'],['machen|faire','machte','hat gemacht'],['ausprobieren|tester, essayer',['probierte aus','probierte … aus','probierte ... aus'],'hat ausprobiert'],['mitspielen|jouer (avec)',['spielte mit','spielte … mit','spielte ... mit'],'hat mitgespielt'],['fit sein|être en forme','war fit','ist fit gewesen'],['gewinnen|gagner','gewann','hat gewonnen'],['verlieren|perdre','verlor','hat verloren']] },
+
+{ id:'national', ico:'🌍', type:'Paare zuordnen', title:'Nationalsport: Wer ist das?', desc:'Personen, Länder und Sportarten verbinden', engine:'match',
+  instr:'Verbinde die Personen mit ihrem Sport und ihrem Land – dann die Fragen mit der richtigen Person.<span class="fr">Relie chaque personne à son sport, puis chaque question à la bonne personne.</span>', batch:6, ordered:true,
+  texts:true,
+  pairs:[['Anirvan','Cricket · Indien'],['Mei','Tischtennis · China / Deutschland'],['Hiroto','Baseball · Japan'],['Yves','Rugby · Frankreich'],['Marlon','Basketball · Philippinen'],['Alexej','Eishockey · Russland'],
+         ['Wer möchte ein Spiel in Manila sehen?','Marlon'],['Wer hat ein Idol aus Japan?','Hiroto'],['Wer sagt: «Wir sind die Besten!»?','Alexej'],['Wer heisst bei seinen Freunden «Rahul»?','Anirvan'],['Wer findet Rugby nicht brutal?','Yves'],['Wer spielt jetzt in Deutschland weiter?','Mei']] },
+
+{ id:'rf', ico:'✅', type:'Richtig oder falsch', title:'Nationalsport: Richtig oder falsch?', desc:'Lies die sechs Texte und entscheide', engine:'tf',
+  instr:'Öffne die Texte, lies sie und klick dann auf «richtig» oder «falsch».<span class="fr">Ouvre les textes, lis-les, puis clique sur « richtig » ou « falsch ».</span>', texts:true,
+  items:[['Cricket kommt aus Indien.',false],['Indien hat 2011 den World-Cup gewonnen.',true],['Mei wohnt jetzt in China.',false],['In China gibt es rund 300 Millionen Tischtennisspieler.',true],['Hiroto kann sehr schnell laufen.',true],['Für Yves ist Rugby gefährlich.',false],['Beim Rugby hat ein Team elf Personen.',false],['Marlon hat früher auf der Strasse Basketball gespielt.',true],['Alexej spielt jeden Tag Eishockey.',false],['Hideki Irabu hat den schnellsten Baseball geworfen.',true]] },
+
+{ id:'sporttyp', ico:'🧠', type:'Umfrage', title:'Welcher Sporttyp bist du?', desc:'Der Test aus dem Dossier – mit Auswertung', engine:'test',
+  instr:'Beantworte die 7 Fragen ehrlich. Am Ende siehst du deinen Sporttyp!<span class="fr">Réponds honnêtement aux 7 questions : tu découvriras ton profil sportif.</span>',
+  qs:[['Wie viele Sportarten machst du regelmässig?',['Keine.','Eine bis zwei.','Drei oder mehr.'],[0,2,4]],
+      ['Wie viele Stunden Sport machst du pro Woche?',['Sport mache ich nur in der Schule.','Ein bis drei Stunden nach der Schule.','Mehr als drei Stunden nach der Schule.'],[0,2,4]],
+      ['Es ist Winter. Was machst du?',['Ich gehe manchmal spazieren.','Ski fahren, eislaufen, schlitteln. Hauptsache: draussen in der Natur!','Ich bleibe am liebsten zu Hause und lese. Oder ich gehe zu Freunden.'],[2,4,0]],
+      ['Es ist Sommer, die Sonne scheint und es ist warm. Was machst du?',['Ich fahre Velo oder gehe Skateboard fahren.','Ich bleibe zu Hause und chille.','Ich gehe mit Freunden ins Schwimmbad.'],[4,0,3]],
+      ['Es regnet. Was machst du?',['Ich spiele am Computer oder sehe einen Film.','Egal, ich gehe draussen joggen.','Ich spiele mit Freunden im Keller Tischtennis.'],[0,4,2]],
+      ['Du bist 100 Meter vor der Haltestelle. Dein Bus kommt. Was machst du?',['Ich renne schnell zur Haltestelle.','Ich gehe nach Hause und fahre mit dem Velo.','Ich warte auf den nächsten Bus.'],[1,2,0]],
+      ['Wie findest du Sportcamps?',['Megacool!','Sportcamps? Nein, danke, das ist nichts für mich!','Na ja, es geht so.'],[4,0,2]]] },
+
+{ id:'rallye', ico:'🏁', type:'Rallye', title:'Sport-Rallye: Das Lösungswort', desc:'9 Posten – finde das geheime Wort!', engine:'rallye',
+  instr:'Beantworte die 9 Fragen. Jede richtige Antwort gibt dir einen Buchstaben für das Lösungswort!<span class="fr">Chaque bonne réponse te donne une lettre du mot mystère.</span>',
+  posts:[['Wie heisst der Komparativ von «schnell»?','schnell → …',['schneller'],1],
+         ['Wie heisst das Perfekt von «spielen»?','Gestern hat er Volleyball …',['gespielt'],4],
+         ['Welcher Kampfsport ist das? Zwei Personen kämpfen mit Handschuhen.','',['Boxen','das Boxen'],2],
+         ['Man sitzt auf einem Pferd. Welche Sportart ist das?','',['Reiten','das Reiten'],1],
+         ['Welchen Sport spielt Mei (Text B)?','Mei hat viele Jahre in China gelebt …',['Tischtennis','das Tischtennis'],1],
+         ['Wie heisst das Präteritum von «laufen»?','laufen – er läuft – er … – er ist gelaufen',['lief'],1],
+         ['Aus welchem Land kommt Anirvan (Text A)?','Er ist ein echter Cricket-Fan.',['Indien','aus Indien'],1],
+         ['Was ist am leichtesten: der Curlingstein, der Unspunnenstein oder der Baumstamm?','leicht – leichter – am leichtesten',['Curlingstein','der Curlingstein'],1],
+         ['Wie heisst der Komparativ von «hoch»?','Achtung: eine Ausnahme!',['höher'],1]] }
+];
+
+const TEXTS = [
+ ['A · Anirvan','Eigentlich kommt Cricket aus England. Aber der Sport ist auch in anderen Ländern sehr beliebt. Anirvan aus Indien ist ein echter Cricket-Fan. Seine Freunde nennen ihn „Rahul“ nach einem bekannten Spieler. 2011 war ein tolles Jahr, weil Indien den World-Cup gewonnen hat.'],
+ ['B · Mei','Mei hat schon als kleines Kind Tischtennis gespielt. Sie hat viele Jahre in China gelebt, aber jetzt wohnt sie in Deutschland. In China gibt es rund 300 Millionen Tischtennisspieler und -spielerinnen. Aber auch in Deutschland ist Tischtennis ein beliebter Sport. Und Mei spielt hier weiter.'],
+ ['C · Hiroto','Hiroto aus Tokio spielt schon lange Baseball. Seine Mannschaft in der Schule ist sehr gut. Hiroto kann den Ball exakt werfen und er kann sehr schnell laufen. Das ist wichtig. Er hat auch ein Idol aus seinem Land Japan: Hideki Irabu. Er hat den schnellsten Baseball mit 158 km/h geworfen.'],
+ ['D · Yves','„Rugby ist doch nicht brutal!“, sagt Yves aus Frankreich. Es gibt klare Regeln und es ist gar nicht gefährlich. Beim Rugby spielen zwei Teams. Ein Team hat 15 Personen. Es ist ein bisschen wie Fussball. Aber man spielt den Ball nicht mit dem Fuss. Man hat den Ball in der Hand und läuft. Oder man wirft. Aber das muss man lange trainieren.'],
+ ['E · Marlon','Marlon lebt auf den Philippinen. Sein Sport ist Basketball. „Meine Freunde und ich haben immer auf der Strasse gespielt. Aber jetzt haben wir einen Verein“, sagt er. Marlon möchte einmal im Araneta Coliseum in Manila ein Spiel sehen. Aber die Karten sind nicht billig.'],
+ ['F · Alexej','Russland spielt gegen Kanada. Und Alexej sitzt wie viele russische Fans vor dem Fernseher. Er sieht Eishockey und ist ein Experte. Mit sechs hat er angefangen. Jetzt ist er 17 und spielt drei Tage pro Woche. „Wir sind die Besten!“, sagt er. „Das moderne Eishockey kommt ja auch aus Russland.“']
+];
+function textsBox() { const d = el('details', { class: 'texts' }, '<summary>📖 Die Texte lesen (Nationalsport)</summary>'); TEXTS.forEach(t => d.append(el('p', {}, `<b>${t[0]}</b><br>${t[1]}`))); return d; }
+
+/* ============ HOME ============ */
+function renderHome() {
+  const g = $('#grid'); g.innerHTML = '';
+  APPS.forEach((a, i) => {
+    const t = el('button', { class: 'tile' + (done[a.id] ? ' ok' : ''), onclick: () => openApp(i) },
+      `<span class="done">⭐</span><span class="ico">${a.ico}</span><span class="type">${a.type}</span><span class="tt">${a.title}</span><span class="ds">${a.desc}</span>`);
+    g.append(t);
+  });
+  const n = APPS.filter(a => done[a.id]).length;
+  $('#pbar').style.width = (n / APPS.length * 100) + '%';
+  $('#ptext').textContent = `${n} / ${APPS.length} Apps geschafft` + (n === APPS.length ? ' – Super! 🏆' : '');
+}
+function goHome() { $('#app').style.display = 'none'; $('#home').style.display = ''; renderHome(); window.scrollTo(0, 0); }
+function openApp(i) {
+  const a = APPS[i];
+  $('#home').style.display = 'none'; $('#app').style.display = 'block';
+  $('#atitle').textContent = a.ico + ' ' + a.title; $('#ainstr').innerHTML = a.instr; setScore('');
+  const st = $('#stage'); st.innerHTML = '';
+  ENGINES[a.engine](a, st);
+  window.scrollTo(0, 0);
+}
+
+/* ============ ENGINES ============ */
+const ENGINES = {};
+
+ENGINES.match = (a, st) => {
+  st.innerHTML = '';
+  if (a.texts) st.append(textsBox());
+  const pairs = a.ordered ? a.pairs.slice() : shuffle(a.pairs);
+  const batches = []; for (let i = 0; i < pairs.length; i += a.batch) batches.push(pairs.slice(i, i + a.batch));
+  let b = 0, errors = 0, found = 0;
+  const box = el('div'); st.append(box);
+  function round() {
+    box.innerHTML = '';
+    setScore(`Runde ${b + 1}/${batches.length} · Fehler: ${errors}`);
+    const set = batches[b]; let selL = null, selR = null, left = 0;
+    const m = el('div', { class: 'match' }), L = el('div', { class: 'col' }), R = el('div', { class: 'col' });
+    m.append(L, R); box.append(m);
+    function check() {
+      if (!selL || !selR) return;
+      if (selL.dataset.k === selR.dataset.k) {
+        [selL, selR].forEach(c => { c.classList.remove('sel'); c.classList.add('good'); c.onclick = null; });
+        found++; left++;
+        if (left === set.length) setTimeout(() => { b++; if (b < batches.length) round(); else finish(); }, 500);
+      } else {
+        errors++; [selL, selR].forEach(c => { c.classList.remove('sel'); flash(c, 'bad'); flash(c, 'shake'); setTimeout(() => c.classList.remove('bad'), 500); });
+        setScore(`Runde ${b + 1}/${batches.length} · Fehler: ${errors}`);
+      }
+      selL = selR = null;
+    }
+    shuffle(set).forEach(p => { const c = el('div', { class: 'card', 'data-k': p[0] }, p[0]); c.onclick = () => { if (selL) selL.classList.remove('sel'); selL = c; c.classList.add('sel'); check(); }; L.append(c); });
+    shuffle(set).forEach(p => { const c = el('div', { class: 'card', 'data-k': p[0] }, p[1]); c.onclick = () => { if (selR) selR.classList.remove('sel'); selR = c; c.classList.add('sel'); check(); }; R.append(c); });
+  }
+  function finish() { markDone(a.id); setScore(''); endScreen(st, errors === 0 ? '🏆' : '🎉', errors === 0 ? 'Perfekt!' : 'Geschafft!', `Du hast alle ${found} Paare gefunden – mit ${errors} Fehler${errors === 1 ? '' : 'n'}.`, () => ENGINES.match(a, st)); }
+  round();
+};
+
+ENGINES.group = (a, st) => {
+  st.innerHTML = '';
+  const names = Object.keys(a.groups); const items = [];
+  names.forEach(g => a.groups[g].forEach(t => items.push([t, g])));
+  let sel = null, errors = 0, left = items.length;
+  const pool = el('div', { class: 'pool' }), gr = el('div', { class: 'groups' });
+  st.append(pool, gr);
+  const boxes = {};
+  names.forEach(n => { const g = el('div', { class: 'gbox' }, `<h3>${n}</h3>`); const it = el('div', { class: 'items' }); g.append(it); boxes[n] = it;
+    g.onclick = () => drop(n, g);
+    g.ondragover = e => { e.preventDefault(); g.classList.add('hover'); }; g.ondragleave = () => g.classList.remove('hover');
+    g.ondrop = e => { e.preventDefault(); g.classList.remove('hover'); drop(n, g); };
+    gr.append(g); });
+  function upd() { setScore(`Noch ${left} · Fehler: ${errors}`); }
+  function drop(n, g) {
+    if (!sel) return;
+    if (sel.dataset.g === n) { const c = sel; c.classList.remove('sel'); c.classList.add('in'); c.draggable = false; c.onclick = null; boxes[n].append(c); flash(c, 'pop'); left--; sel = null; upd(); if (!left) setTimeout(finish, 600); }
+    else { errors++; flash(sel, 'shake'); flash(g, 'shake'); upd(); }
+  }
+  shuffle(items).forEach(([t, g]) => { const c = el('div', { class: 'chip', 'data-g': g, draggable: 'true' }, t);
+    c.onclick = e => { e.stopPropagation(); if (sel) sel.classList.remove('sel'); sel = c; c.classList.add('sel'); };
+    c.ondragstart = () => { if (sel) sel.classList.remove('sel'); sel = c; c.classList.add('sel'); };
+    pool.append(c); });
+  upd();
+  function finish() { markDone(a.id); setScore(''); endScreen(st, errors === 0 ? '🏆' : '🎉', errors === 0 ? 'Perfekt sortiert!' : 'Alles sortiert!', `Fehler: ${errors}`, () => ENGINES.group(a, st)); }
+};
+
+ENGINES.table = (a, st) => {
+  st.innerHTML = '';
+  const t = el('table', { class: 'tt' }); t.innerHTML = '<tr>' + a.cols.map(c => `<th>${c}</th>`).join('') + '</tr>';
+  const inputs = [];
+  a.rows.forEach(r => { const tr = el('tr'); const [base, fr] = r[0].split('|');
+    tr.append(el('td', {}, base + (fr ? `<span class="fr">${fr}</span>` : '')));
+    r.slice(1).forEach(ans => { const td = el('td'); const i = el('input', { class: 'gap', autocomplete: 'off', autocapitalize: 'off', spellcheck: 'false' }); i._ans = ans; inputs.push(i); td.append(i); tr.append(td); });
+    t.append(tr); });
+  st.append(umlautKeys(st), t);
+  checkBar(a, st, inputs);
+};
+
+ENGINES.gaps = (a, st) => {
+  st.innerHTML = '';
+  const box = el('div', { class: 'sentences' }); const inputs = [];
+  a.items.forEach((it, n) => { const s = el('div', { class: 'sent' }); s.append(document.createTextNode((n + 1) + '. ' + it[0]));
+    const i = el('input', { class: 'gap', autocomplete: 'off', autocapitalize: 'off', spellcheck: 'false' }); i._ans = it[1]; inputs.push(i);
+    s.append(i, document.createTextNode(it[2] + ' ')); s.append(el('span', { class: 'hint' }, `(${it[3]})`)); box.append(s); });
+  st.append(umlautKeys(st), box);
+  checkBar(a, st, inputs);
+};
+
+function checkBar(a, st, inputs) {
+  const bar = el('div', { class: 'actions' }), msg = el('span', { class: 'msg' });
+  const chk = el('button', { class: 'btn' }, '✔ Kontrollieren'), sol = el('button', { class: 'btn w', style: 'display:none' }, '👀 Lösungen zeigen'), rst = el('button', { class: 'btn y' }, '↻ Neu');
+  bar.append(chk, sol, rst, msg); st.append(bar);
+  inputs.forEach((inp, k) => inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); (inputs[k + 1] || chk).focus(); } }));
+  chk.onclick = () => {
+    let ok = 0;
+    inputs.forEach(i => { i.parentNode.querySelectorAll('.sol').forEach(s => s.remove()); const g = same(i.value, i._ans); i.classList.toggle('good', g); i.classList.toggle('bad', !g); if (g) ok++; });
+    setScore(`${ok} / ${inputs.length}`);
+    if (ok === inputs.length) { msg.className = 'msg good'; msg.textContent = '🏆 Alles richtig – super!'; markDone(a.id); sol.style.display = 'none'; }
+    else { msg.className = 'msg bad'; msg.textContent = `${ok} von ${inputs.length} richtig. Korrigiere die roten Felder!`; sol.style.display = ''; }
+  };
+  sol.onclick = () => inputs.forEach(i => { if (!i.classList.contains('good') && !i.parentNode.querySelector('.sol')) { const s = el('span', { class: 'sol' }, '→ ' + [].concat(i._ans)[0]); i.after(s); } });
+  rst.onclick = () => ENGINES[a.engine](a, st);
+}
+
+ENGINES.mio = (a, st) => {
+  st.innerHTML = ''; setScore('');
+  let q = 0, joker = true;
+  const wrap = el('div', { class: 'mio' }), main = el('div'), lad = el('ul', { class: 'ladder' });
+  a.ladder.forEach((p, i) => lad.append(el('li', { class: (i === 4 || i === 8 || i === 11) ? 'safe' : '' }, `<span>${i + 1}</span><span>${p}</span>`)));
+  wrap.append(main, lad); st.append(wrap);
+  function show() {
+    [...lad.children].forEach((li, i) => { li.classList.toggle('cur', i === q); li.classList.toggle('won', i < q); });
+    main.innerHTML = '';
+    const [text, opts] = a.qs[q];
+    main.append(el('div', { class: 'q' }, `Frage ${q + 1}<br>${text}`));
+    const ans = el('div', { class: 'answers' }); const btns = [];
+    shuffle(opts.map((o, i) => [o, i === 0])).forEach(([o, right], k) => {
+      const b = el('button', { class: 'ans' }, `<b>${'ABCD'[k]}:</b>${o}`); b._r = right; btns.push(b);
+      b.onclick = () => { btns.forEach(x => x.disabled = true);
+        if (right) { b.classList.add('good'); setTimeout(() => { q++; if (q === a.qs.length) win(); else show(); }, 900); }
+        else { b.classList.add('bad'); btns.find(x => x._r).classList.add('good'); setTimeout(() => lose(), 1600); } };
+      ans.append(b); });
+    main.append(ans);
+    const bar = el('div', { class: 'actions' });
+    const j = el('button', { class: 'btn y' }, '50:50'); j.disabled = !joker;
+    j.onclick = () => { joker = false; j.disabled = true; shuffle(btns.filter(x => !x._r)).slice(0, 2).forEach(x => { x.classList.add('hide'); x.disabled = true; }); };
+    bar.append(j); main.append(bar);
+  }
+  function win() { markDone(a.id); endScreen(st, '💰🏆', 'Du bist Sport-Millionär!', 'Alle 12 Fragen richtig beantwortet. Wahnsinn!', () => ENGINES.mio(a, st)); }
+  function lose() { const safe = q >= 8 ? a.ladder[7] : q >= 4 ? a.ladder[3] : '0'; endScreen(st, '😬', 'Leider falsch!', `Du hast ${q} Fragen geschafft und gehst mit <b>${safe} Punkten</b> nach Hause. Versuch es nochmal!`, () => ENGINES.mio(a, st)); }
+  show();
+};
+
+ENGINES.order = (a, st) => {
+  st.innerHTML = '';
+  const list = shuffle(a.sents); let n = 0, errors = 0;
+  const box = el('div'); st.append(box);
+  function show() {
+    box.innerHTML = ''; setScore(`Satz ${n + 1}/${list.length} · Fehler: ${errors}`);
+    const target = list[n].split(' ');
+    const line = el('div', { class: 'answerline' }), pool = el('div', { class: 'pool' });
+    box.append(line, pool);
+    let words = shuffle(target.map((w, i) => ({ w, i })));
+    if (words.map(x => x.w).join(' ') === target.join(' ')) words = words.reverse();
+    words.forEach(o => { const c = el('div', { class: 'chip' }, o.w); c._w = o.w;
+      c.onclick = () => { (c.parentNode === pool ? line : pool).append(c); line.classList.remove('bad'); }; pool.append(c); });
+    const bar = el('div', { class: 'actions' }), msg = el('span', { class: 'msg' });
+    const chk = el('button', { class: 'btn' }, '✔ Kontrollieren');
+    chk.onclick = () => {
+      const got = [...line.children].map(c => c._w).join(' ');
+      if (pool.children.length) { msg.className = 'msg bad'; msg.textContent = 'Benutze alle Wörter!'; return; }
+      if (got === target.join(' ')) { line.classList.add('good'); msg.className = 'msg good'; msg.textContent = '✔ Richtig!'; chk.disabled = true; setTimeout(() => { n++; if (n < list.length) show(); else finish(); }, 1000); }
+      else { errors++; line.classList.add('bad'); flash(line, 'shake'); msg.className = 'msg bad'; msg.textContent = 'Noch nicht richtig. Wo steht das Verb?'; setScore(`Satz ${n + 1}/${list.length} · Fehler: ${errors}`); }
+    };
+    const help = el('button', { class: 'btn w' }, '💡 Lösung');
+    help.onclick = () => { msg.className = 'msg'; msg.textContent = list[n]; errors++; setScore(`Satz ${n + 1}/${list.length} · Fehler: ${errors}`); };
+    bar.append(chk, help, msg); box.append(bar);
+  }
+  function finish() { markDone(a.id); setScore(''); endScreen(st, '🧩', 'Alle Sätze gebaut!', `Fehler: ${errors}. Merke: weil … Verb am Ende!`, () => ENGINES.order(a, st)); }
+  show();
+};
+
+ENGINES.memory = (a, st) => {
+  st.innerHTML = '';
+  const chosen = shuffle(a.pairs).slice(0, 8); let cards = [];
+  chosen.forEach((p, i) => { cards.push({ k: i, t: p[0], emo: true }); cards.push({ k: i, t: p[1] }); });
+  cards = shuffle(cards);
+  const g = el('div', { class: 'mem' }); st.append(g);
+  let open = [], moves = 0, found = 0, lock = false;
+  cards.forEach(c => { const b = el('button', { class: 'mcard' }, `<div class="in"><div class="f">?</div><div class="b${c.emo ? ' emo' : ''}">${c.t}</div></div>`); b._k = c.k;
+    b.onclick = () => { if (lock || b.classList.contains('open') || b.classList.contains('found')) return;
+      b.classList.add('open'); open.push(b);
+      if (open.length === 2) { moves++; setScore(`Züge: ${moves} · Paare: ${found}/8`);
+        if (open[0]._k === open[1]._k) { open.forEach(x => { x.classList.remove('open'); x.classList.add('found'); }); open = []; found++; setScore(`Züge: ${moves} · Paare: ${found}/8`); if (found === 8) setTimeout(() => { markDone(a.id); setScore(''); endScreen(st, '🃏', 'Alle Paare gefunden!', `Du hast ${moves} Züge gebraucht.`, () => ENGINES.memory(a, st)); }, 700); }
+        else { lock = true; setTimeout(() => { open.forEach(x => x.classList.remove('open')); open = []; lock = false; }, 1000); } } };
+    g.append(b); });
+  setScore('Züge: 0 · Paare: 0/8');
+};
+
+ENGINES.hangman = (a, st) => {
+  st.innerHTML = '';
+  const list = shuffle(a.words).slice(0, 8); let n = 0, won = 0;
+  const MAX = 7;
+  const box = el('div'); st.append(box);
+  function draw(m) {
+    const parts = [
+      '<line x1="20" y1="230" x2="180" y2="230"/>', '<line x1="50" y1="230" x2="50" y2="20"/>', '<line x1="50" y1="20" x2="140" y2="20"/><line x1="50" y1="55" x2="85" y2="20"/>',
+      '<line x1="140" y1="20" x2="140" y2="50"/>', '<circle cx="140" cy="70" r="20"/>', '<line x1="140" y1="90" x2="140" y2="150"/><line x1="140" y1="105" x2="115" y2="130"/><line x1="140" y1="105" x2="165" y2="130"/>',
+      '<line x1="140" y1="150" x2="118" y2="190"/><line x1="140" y1="150" x2="162" y2="190"/>'];
+    return `<svg viewBox="0 0 200 240" width="100%" style="max-width:220px" stroke="#1f7a43" stroke-width="6" stroke-linecap="round" fill="none">${parts.slice(0, m).join('')}</svg>`;
+  }
+  function show() {
+    box.innerHTML = ''; setScore(`Wort ${n + 1}/${list.length} · Gelöst: ${won}`);
+    const [word, clue, fr] = list[n]; const guessed = new Set(); let miss = 0;
+    const wrap = el('div', { class: 'hang' }), pic = el('div', { class: 'center' }), right = el('div');
+    wrap.append(pic, right); box.append(wrap);
+    const cl = el('div', { class: 'clue' }, `${clue}`); const tip = el('button', { class: 'btn w', style: 'margin-top:8px;font-size:.85rem;padding:5px 12px' }, '💡 Tipp auf Französisch'); tip.onclick = () => { tip.replaceWith(el('span', { class: 'fr' }, fr)); }; cl.append(el('br'), tip);
+    const wd = el('div', { class: 'word' }), lt = el('div', { class: 'letters' }), msg = el('div', { class: 'msg center', style: 'margin-top:10px' });
+    right.append(cl, wd, lt, msg);
+    function render() {
+      pic.innerHTML = draw(miss) + `<div class="msg">${MAX - miss} Versuche</div>`;
+      wd.innerHTML = word.split('').map(c => `<span>${guessed.has(c) ? c : ''}</span>`).join('');
+    }
+    function end(ok) {
+      lt.querySelectorAll('button').forEach(b => b.disabled = true);
+      if (ok) { won++; msg.className = 'msg good center'; msg.textContent = '✔ Super! ' + word; }
+      else { msg.className = 'msg bad center'; msg.textContent = 'Schade! Das Wort war: ' + word; word.split('').forEach(c => guessed.add(c)); render(); }
+      const nx = el('button', { class: 'btn', style: 'margin-top:10px' }, n + 1 < list.length ? 'Nächstes Wort →' : 'Fertig!');
+      nx.onclick = () => { n++; if (n < list.length) show(); else { if (won >= list.length - 2) markDone(a.id); setScore(''); endScreen(st, won === list.length ? '🏆' : '🙂', `${won} / ${list.length} Wörter gelöst`, won >= list.length - 2 ? 'Sehr gut gemacht!' : 'Übe noch ein bisschen – du schaffst das!', () => ENGINES.hangman(a, st)); } };
+      const nd = el('div', { class: 'center' }); nd.append(nx); right.append(nd);
+    }
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜ'.split('').forEach(ch => { const b = el('button', {}, ch);
+      b.onclick = () => { b.disabled = true; guessed.add(ch);
+        if (word.includes(ch)) { b.classList.add('hit'); render(); if (word.split('').every(c => guessed.has(c))) end(true); }
+        else { b.classList.add('miss'); miss++; render(); if (miss >= MAX) end(false); } };
+      lt.append(b); });
+    render();
+  }
+  show();
+};
+
+ENGINES.tf = (a, st) => {
+  st.innerHTML = ''; if (a.texts) st.append(textsBox());
+  const box = el('div', { class: 'tf' }); st.append(box); let answered = 0, ok = 0;
+  a.items.forEach(([s, v], i) => { const r = el('div', { class: 'tfrow' }, `<span>${i + 1}. ${s}</span>`);
+    const br = el('button', {}, 'richtig'), bf = el('button', {}, 'falsch');
+    [[br, true], [bf, false]].forEach(([b, val]) => b.onclick = () => { br.disabled = bf.disabled = true; answered++;
+      const good = val === v; b.classList.add('pick', good ? 'right' : 'wrong'); r.classList.add(good ? 'good' : 'bad'); if (good) ok++; else (v ? br : bf).classList.add('pick', 'right');
+      setScore(`${ok} / ${a.items.length}`);
+      if (answered === a.items.length) { if (ok >= a.items.length - 1) markDone(a.id); const bar = el('div', { class: 'actions' }); bar.append(el('span', { class: 'msg ' + (ok === a.items.length ? 'good' : '') }, ok === a.items.length ? '🏆 Alles richtig!' : `${ok} von ${a.items.length} richtig.`), el('button', { class: 'btn y', onclick: () => ENGINES.tf(a, st) }, '↻ Nochmal')); st.append(bar); } });
+    r.append(br, bf); box.append(r); });
+  setScore(`0 / ${a.items.length}`);
+};
+
+ENGINES.test = (a, st) => {
+  st.innerHTML = ''; const form = el('form');
+  a.qs.forEach(([q, opts], i) => { const d = el('div', { class: 'qtest' }, `<h4>${i + 1}. ${q}</h4>`);
+    opts.forEach((o, k) => d.append(el('label', {}, `<input type="radio" name="q${i}" value="${k}"> <span><b>${'abc'[k]})</b> ${o}</span>`))); form.append(d); });
+  const res = el('div'); const bar = el('div', { class: 'actions' }); const b = el('button', { class: 'btn', type: 'button' }, '🧮 Auswerten');
+  bar.append(b); st.append(form, bar, res);
+  b.onclick = () => {
+    let sum = 0, missing = 0; a.qs.forEach((q, i) => { const c = form.querySelector(`input[name=q${i}]:checked`); if (!c) missing++; else sum += q[2][+c.value]; });
+    if (missing) { res.innerHTML = `<p class="msg bad">Beantworte bitte alle Fragen (noch ${missing}).</p>`; return; }
+    let t, e;
+    if (sum <= 8) { e = '🛋️'; t = 'Sport ist nichts für dich. Du hast sicher andere Interessen. Welche?'; }
+    else if (sum <= 19) { e = '🚴'; t = 'Du machst gerne Sport und bist sicher fit. Probierst du auch gern Neues aus?'; }
+    else { e = '🏅'; t = 'Du bist ein absoluter Sportfreak. Nichts ist zu anstrengend für dich. Welche Sportart interessiert dich nicht?'; }
+    res.innerHTML = `<div class="result"><div style="font-size:3rem">${e}</div><div class="pts">${sum} Punkte</div><p>${t}</p><p style="font-weight:600">Und jetzt: Erzähl deinem Partner auf Deutsch, welcher Sporttyp du bist!</p></div>`;
+    markDone(a.id); res.scrollIntoView({ behavior: 'smooth' });
+  };
+};
+
+ENGINES.rallye = (a, st) => {
+  st.innerHTML = ''; const word = a.posts.map(p => p[2][0].replace(/^(der|die|das) /i, '')[p[3] - 1].toUpperCase());
+  const lw = el('div', { class: 'lw' }); word.forEach(() => lw.append(el('span'))); st.append(lw);
+  const g = el('div', { class: 'rally' }); st.append(umlautKeys(st), g); let got = 0;
+  a.posts.forEach(([q, hint, ans, idx], i) => {
+    const p = el('div', { class: 'post' }, `<span class="n">${i + 1}</span><p style="display:inline">${q}</p>${hint ? `<br><small>${hint}</small>` : ''}`);
+    const row = el('div', { class: 'actions', style: 'margin-top:8px' });
+    const inp = el('input', { class: 'gap', style: 'flex:1', autocomplete: 'off', autocapitalize: 'off', spellcheck: 'false', placeholder: 'Deine Antwort' });
+    const b = el('button', { class: 'btn' }, 'OK');
+    const go = () => { if (same(inp.value, ans)) { inp.classList.remove('bad'); inp.classList.add('good'); inp.disabled = b.disabled = true; p.classList.add('good');
+        const s = lw.children[i]; s.textContent = word[i]; s.classList.add('on'); got++; setScore(`${got} / ${a.posts.length} Posten`);
+        p.append(el('small', {}, `Buchstabe Nr. ${idx} → <b>${word[i]}</b>`));
+        if (got === a.posts.length) setTimeout(() => { markDone(a.id); st.prepend(el('div', { class: 'result' }, `<div class="pts">${word.join('')}!</div><p>Bravo! Du hast das Lösungswort gefunden: Du bist <b>${word.join('').toLowerCase()}</b>! 🏁</p>`)); window.scrollTo({ top: 0, behavior: 'smooth' }); }, 500); }
+      else { inp.classList.add('bad'); flash(inp, 'shake'); } };
+    b.onclick = go; inp.onkeydown = e => { if (e.key === 'Enter') go(); };
+    row.append(inp, b); p.append(row); p.append(el('div', { style: 'font-size:.8rem;color:#5d7166;margin-top:4px' }, `Lösungsbuchstabe: Buchstabe Nr. ${idx}`)); g.append(p); });
+  setScore(`0 / ${a.posts.length} Posten`);
+};
+
+renderHome();
+</script>
+</body>
+</html>
